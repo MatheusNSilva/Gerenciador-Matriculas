@@ -1,6 +1,6 @@
 <%- contentFor('body') %>
 <h1>Cadastro de Aluno</h1>
-<form method="post" action="/cadastroAluno/<%=(aluno.matricula ? aluno.matricula : '')%>">
+<form method="post" action="/aluno/<%=(aluno.matricula ? aluno.matricula : '')%>">
     Matrícula: <input type="text" name="matricula" /><br/>
     Nome: <input type="text" name="nome" value="<%=aluno.nome %>" /><br/>
   <input type="submit" value="Enviar" />
