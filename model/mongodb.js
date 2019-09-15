@@ -19,3 +19,8 @@ const disciplinaSchema = new Mongoose.Schema({
 const Disciplina = Mongoose.model('Disciplina', disciplinaSchema);
 
 module.exports = Disciplina; 
+
+const alunoSchema = new Mongoose.Schema({
+    "_id" : ObjectId("5b21a4332a5e3333cc64a12f"), 
+    "nome" : "João",
+});

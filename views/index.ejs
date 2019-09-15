@@ -2,14 +2,16 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title><%=title %></title>
+  <title>Home</title>
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
   <main>
     <div class="container">
-      <%- body %>
-      
+      <div class="container-aluno">
+        <input type="text" name="nome" value="<%=aluno.nome %>" /><br/>
+        <input type="submit" value="Enviar" />
+      </div>
     </div>
   </main> 
   <footer>
