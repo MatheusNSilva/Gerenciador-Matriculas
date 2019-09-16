@@ -18,12 +18,11 @@ const disciplinas = [];
 ///
 
 
-app.get('/aluno', function (request, response) {
+app.get('/', function (request, response) {
     //Este handler serve para registar um novo aluno.
     //Desta forma, passamos um objeto aluno vazio para
     //a view.
-    return response.json({ alunos: alunos });
-    response.render("/");
+    response.render("index", {alunos: alunos});
 });
 
 app.post('/aluno', function(request, response) {
@@ -38,9 +37,16 @@ app.post('/aluno', function(request, response) {
     response.json(alunos);
 });
 
+app.put('/aluno/:alunoId', function(request, response) {
+    const { alunoId } = request.params;
+    const { nome } = request.body;
+    const aluno = alunos.find( alunoAntigo => alunoAntigo._id);
+    aluno.nome = nome;
+    return response.json(aluno)
+});
+
 app.get('/disciplina', function (request, response) {
     //Registra
-
     return response.json({ disciplinas: disciplinas });
 });
 
@@ -48,7 +54,7 @@ app.post('/disciplina', function(request, response) {
     const { nome, horas, gradeHorario } = request.body;
 
     const novaDisciplina = {
-        aluno: [],
+        alunos: [],
         nome: nome,
         horas: horas,
         gradeHorario: gradeHorario,
@@ -59,12 +65,29 @@ app.post('/disciplina', function(request, response) {
     response.json(disciplinas);
 });
 
+app.put('/disciplina/:disciplinaId', function(request, response) {
+    const { nome, horas, gradeHorario } = request.body;
+    
+    const { disciplinaId }  = request.params;
+    const disciplina = disciplinas.find( disciplina => disciplina._id  == disciplinaId);
+    disciplina.nome = nome;
+    disciplina.horas = horas;
+    alteraGradeHorario(disciplina, gradeHorario);
+    
+    response.json(disciplina);
+});
+
 app.post('/matricular', function(request, response) {
     const { alunoId, disciplinaId } = request.body;
     
     const aluno = alunos.find(aluno => aluno._id === alunoId);
     const disciplina = disciplinas.find(disciplina => disciplina._id === disciplinaId);
-    verificaConflito(aluno, disciplina)
+    const temConflito = verificaConflito(aluno, disciplina);
+    if (!temConflito) disciplina.alunos.push(aluno._id);
+
+    const status = temConflito ? 400 : 201
+    
+    response.sendStatus(status);
 });
 
 
@@ -99,4 +122,17 @@ function verificaConflito (aluno, disciplinaEscolhida) {
 
     return temConflitos;
     
+}
+
+function alteraGradeHorario(disciplinaEscolhida, novaGradeHorario) {
+    disciplinaEscolhida.gradeHorario = novaGradeHorario;
+    if (disciplinaEscolhida.alunos.legth == 0) {
+        disciplinaEscolhida.alunos.forEach( aluno => {
+            if (verificaConflito(disciplinaEscolhida, aluno) == true) {
+                disciplinaEscolhida.alunos = disciplinaEscolhida.alunos
+                    .filter(alunoAntigo => alunoAntigo._id != aluno._id )
+            }
+
+        });
+    }
 }
